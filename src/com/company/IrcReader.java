@@ -64,6 +64,7 @@ public class IrcReader implements Runnable {
             case 412: // No text to send
                 break;
 
+            case 404: ircGui.addLine("Could not send! 404"); // 404 disconnection
 
             default: ircGui.addLine(line);
 
@@ -74,6 +75,7 @@ public class IrcReader implements Runnable {
         if(command.equals("PRIVMSG")){
             System.out.println("Made it here");
             ircGui.addLine("PRIVMSG WORKED!");
+            privmsg(line);
         }
     }
 
@@ -82,9 +84,21 @@ public class IrcReader implements Runnable {
 
     private String privmsg(String line){
         // Extract username who authored line
+        Matcher nameFinder = Pattern.compile(":[\\s\\S]*?!~").matcher(line);
+        String name;
 
+        if(nameFinder.find()){
+            name = nameFinder.group();
+            name = name.substring(1, name.length() - 2) + " ~ ";
+        } else {
+            name = "Unknown name (regex fail)";
+        }
 
+        System.out.println(name);
         // Extract channel name OR username if private message
+        if (line.contains(this.channel)){
+            System.out.println("Channel found!");
+        }
         return "";
     }
 
